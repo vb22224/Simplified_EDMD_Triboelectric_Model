@@ -5,13 +5,13 @@ Lacks model implemented with a simple time driven molecular dynamic simulation u
 2nd model iteration aimed to increse speed with only re-computing relevant colission times in the colission time matrix
 '''
 
-import numpy as np
-import math as m
-from tqdm import tqdm
-import lack_plots as lp
-import lack_functions as lf
 import csv
+import math as m
 
+import lack_functions as lf
+import lack_plots as lp
+import numpy as np
+from tqdm import tqdm
 
 
 def main(**args):
@@ -264,7 +264,7 @@ def main(**args):
                 wall_times[p] = lf.t_wall(r0[p], v0[p], radii[p], box_length, hit=wall_index)
                 
                 # Recaculating relevant particle collsions
-                for a in range(0, p): # Vertically in collsion matrix
+                for a in range(p): # Vertically in collsion matrix
                     coll_times[a][p] = lf.t_coll(r0[a], r0[p], v0[a], v0[p], radii[a], radii[p])
                 for b in range(p + 1, n_particles): # Horizontally in collsion matrix
                     coll_times[p][b] = lf.t_coll(r0[p], r0[b], v0[p], v0[b], radii[p], radii[b])
@@ -331,8 +331,6 @@ def main(**args):
         print(f'Number of coordinates fianlly less than 0: {np.count_nonzero(r0 < 0)}')
         print(f'Number of coordinates finally greater than the length of box: {np.count_nonzero(r0 > box_length)}')
         print(f'Number of particles: {n_particles}')
-
-    return
 
 
 
