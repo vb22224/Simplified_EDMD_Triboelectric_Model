@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
 '''Reads the outputs from my Lack model simulations so the data can be used in graphs etc'''
 
+import lack_functions as lf
+import lack_plots as lp
 import numpy as np
 import pandas as pd
-import lack_plots as lp
-import lack_functions as lf
-import matplotlib.pyplot as plt
-
-
 
 file_name = 'lack_model_output.txt'
 # file_name = '..\\MAIN\\Charge and Size Distributions\\New_Output_Files\\G90_63+_Mastersizer.txt'

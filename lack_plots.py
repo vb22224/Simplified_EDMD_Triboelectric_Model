@@ -1,18 +1,18 @@
-# -*- coding: utf-8 -*-
 '''Functions required for plotting graphs in the Lack's model'''
 
-import numpy as np
-import matplotlib.pyplot as plt
 import lack_functions as lf
+import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.ticker import ScalarFormatter
 from scipy.optimize import curve_fit
 
 
-
-def plot_3D(data, scale, size, box_length=0, charge_range=[0, 0], show=True, save=False, save_path='', dpi=600):
+def plot_3D(data, scale, size, box_length=0, charge_range=None, show=True, save=False, save_path='', dpi=600):
     
     '''Plots the data as a scatter plot in 3D, sized by radii and coloured by scale'''
     
+    if charge_range is None:
+        charge_range = [0, 0]
     fig = plt.figure(dpi=dpi)
     
     # Create a grid of subplots with 1 row and 2 columns
@@ -53,7 +53,6 @@ def plot_3D(data, scale, size, box_length=0, charge_range=[0, 0], show=True, sav
 
     plt.close()
 
-    return
 
 
 
@@ -68,14 +67,13 @@ def size_histogram(radii, n_bins=15, dpi=600):
     log_bins = np.logspace(np.log10(size_array.min()), np.log10(size_array.max()), n_bins)
     plt.hist(size_array, bins=log_bins, edgecolor='black')
     
-    plt.xlabel('d$_p$ / $\mathrm{\mu}$m')
+    plt.xlabel(r'd$_p$ / $\mathrm{\mu}$m')
     plt.ylabel('Frequency')
     plt.xscale('log')
     plt.gca().xaxis.set_major_formatter(ScalarFormatter())
     
     plt.show()
     
-    return
     
 
 
@@ -91,12 +89,11 @@ def speed_histogram(vel_data, n_bins=15, dpi=600):
     plt.figure(dpi=dpi)
     plt.hist(speed_data, bins=n_bins)
     
-    plt.xlabel('Particle Speed / $\lambda$s$^{-1}$')
+    plt.xlabel(r'Particle Speed / $\lambda$s$^{-1}$')
     plt.ylabel('Number of Particles')
     
     plt.show()
 
-    return    
 
 
 def maxwell_boltzmann(x, A, T):
@@ -113,14 +110,14 @@ def ke_histogram(vel_data, masses, n_bins=15, dpi=600):
     ke = 0.5 * np.multiply(masses, np.square(speed_data))
     
     plt.figure(dpi=dpi)
-    bin_heights, bins, patches = plt.hist(ke, bins=n_bins, label='Simulation Data')
+    bin_heights, bins, _patches = plt.hist(ke, bins=n_bins, label='Simulation Data')
     bin_centers = 0.5 * (bins[:-1] + bins[1:])
     
     # Provide better initial guesses for parameters
     A_fit = 1000 /  (np.mean(ke) ** 2)
     T_fit = np.mean(ke) / 4
 
-    params, covariance = curve_fit(maxwell_boltzmann, bin_centers, bin_heights, p0=[A_fit, T_fit])
+    params, _covariance = curve_fit(maxwell_boltzmann, bin_centers, bin_heights, p0=[A_fit, T_fit])
     A_fit, T_fit = params
     
     x_fit = np.linspace(0, max(bin_centers), 1000) 
@@ -131,7 +128,6 @@ def ke_histogram(vel_data, masses, n_bins=15, dpi=600):
     plt.legend()
     plt.show()
 
-    return
 
 
 
@@ -150,12 +146,11 @@ def scatter_speeds(vel_data, radii, dpi=600):
     plt.figure(dpi=dpi)
     plt.scatter(radii, y)
     
-    plt.xlabel('Radius / $\lambda$')
+    plt.xlabel(r'Radius / $\lambda$')
     plt.ylabel('<V>$^{-2/3}$')
     
     plt.show()
     
-    return
 
 
 
@@ -179,7 +174,6 @@ def track_energy_momentum(energy_list, px_list, py_list, pz_list, dpi=600):
     plt.legend()
     plt.show()
     
-    return
 
 
 
@@ -191,14 +185,13 @@ def plot_charge(radii, charge, name="Radii", dpi=600):
     
     plt.plot(radii, charge, "x", color='r')
     
-    plt.xlabel('$d_p$ / $\mu$m')
+    plt.xlabel(r'$d_p$ / $\mu$m')
     # plt.ylabel('Charge / 4$\pi p_{H0}\lambda^2$e')
     plt.ylabel('Charge / a.u.')
     
     # plt.xlim(0, 500)
     # plt.ylim(-200, 40)
     
-    return
 
 
 
@@ -214,7 +207,6 @@ def plot_fit(a, b, c, x_min, x_max, N=1000):
     
     plt.plot(x_list, y_list, "--", color='black')
     
-    return
     
 
 
@@ -231,7 +223,6 @@ def plot_fit_complex(a, d, x_min, x_max, N=1000):
     plt.plot(x_list, y_list, "--", color='black')
     
     
-    return
 
 
 
@@ -244,12 +235,11 @@ def plot_size_dists(dp_fit, vol_density, num_density, y_label='Normalised Freque
     plt.plot(dp_fit, num_density, label='Number')
     
     plt.xscale('log')
-    plt.xlabel('d$_p$ / $\mu$m')
+    plt.xlabel(r'd$_p$ / $\mu$m')
     plt.ylabel(y_label)
     plt.legend()
     plt.show()
     
-    return
 
 
 

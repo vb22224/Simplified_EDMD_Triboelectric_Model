@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
 '''Functions required for the running of the Lack model simulation'''
 
-import numpy as np
 import math as m
-import pandas as pd
 import statistics as stats
+
+import numpy as np
+import pandas as pd
 from scipy.optimize import minimize
 from scipy.stats import norm
-
 
 
 def round_up_to_1sf(number):
@@ -47,7 +46,7 @@ def overlap_check(r, radii, n_particles):
     
     overlaps = []
     
-    for i in range(0, n_particles):
+    for i in range(n_particles):
         for j in range(i + 1, n_particles):
             
             Rij = radii[i] + radii[j]
@@ -66,14 +65,12 @@ def out_of_bounds(r, radii, n_particles, box_length):
     
     outside = []
     
-    for i in range(0, n_particles):
+    for i in range(n_particles):
     
         dx, dy, dz = r[i][0], r[i][1], r[i][2]
         ri = radii[i]
     
-        if dx < ri or dy < ri or dz < ri:
-            outside.append(i)
-        elif dx > box_length - ri or dy > box_length - ri or dz > box_length - ri:
+        if dx < ri or dy < ri or dz < ri or dx > box_length - ri or dy > box_length - ri or dz > box_length - ri:
             outside.append(i)
 
     return np.array(outside)
@@ -109,7 +106,7 @@ def t_wall(pos, vel, rad, b_len, hit='inf'):
     
     for n1, p in enumerate(pos): # Iterate over position dimentions
         for n2 in range(2): # Two sides to box per dimension i.e. up/down
-            d = b_len * n2 - pos[n1] - rad * (n2 * 2 - 1) # Distance to box wall from edge of radius
+            d = b_len * n2 - p - rad * (n2 * 2 - 1) # Distance to box wall from edge of radius
             t = d / vel[n1] # Time = Displacement / Velocity
             if t < 0 or hit == n1 * 2 + n2:
                 t = 'inf' # If the particle is moving away or this is the particle in the collision: Time = Infinity
@@ -185,15 +182,13 @@ def write_output(params, radii, masses, r0, v0, high_energy_states, energy_state
     with open('lack_model_output.txt', 'w') as f:
         
         f.write('Parameters: \n')
-        for key,value in params.items():
-            f.write(str(key) + ': \t' + str(value) + '\n')
+        f.writelines(str(key) + ': \t' + str(value) + '\n' for key,value in params.items())
         
         f.write('\nradii,masses,position(x),position(y),position(z),velocity(x),velocity(y),velocity(z),initial high e,final high e,final low e,charge\n')
         df = pd.DataFrame(data=[radii, masses, r0[:,0], r0[:,1], r0[:,2], v0[:,0], v0[:,1], v0[:,2], high_energy_states, energy_states[:,0], energy_states[:,1], charges]).transpose()
         df_string = df.to_csv(index=False, header=False, sep=',')
         f.write(df_string)
         
-    return
 
 
 
@@ -298,10 +293,12 @@ def objective_function(variables, *args):
 
 
 
-def get_fit(diameters, charge, initial_abc_guess=[0.003, 2, -50], minimise_op="R2"):
+def get_fit(diameters, charge, initial_abc_guess=None, minimise_op="R2"):
     
     '''Gets the optimised fit for the charge'''
     
+    if initial_abc_guess is None:
+        initial_abc_guess = [0.003, 2, -50]
     result = minimize(objective_function, initial_abc_guess, args=(diameters, charge, minimise_op))
     a, b, c = result.x[0], result.x[1], result.x[2]
     
@@ -329,10 +326,12 @@ def objective_function_complex(variables, *args):
 
 
 
-def get_fit_complex(diameters, charge, initial_ad_guess=[130, -33], minimise_op="R2"):
+def get_fit_complex(diameters, charge, initial_ad_guess=None, minimise_op="R2"):
     
     '''Gets the optimised fit for the charge for the comxplex distribution shape'''
     
+    if initial_ad_guess is None:
+        initial_ad_guess = [130, -33]
     result = minimize(objective_function_complex, initial_ad_guess, args=(diameters, charge, minimise_op))
     a, d = result.x[0], result.x[1]
     

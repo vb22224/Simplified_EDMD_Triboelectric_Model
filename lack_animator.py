@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 '''Creates animations of hard sphere EDMD silumations from the output of lack_model.py'''
 
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 from matplotlib.animation import FuncAnimation
-
 
 
 def first_index_exceeding_sum(lst, threshold):
