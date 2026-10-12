@@ -23,7 +23,7 @@ def plot_3D(data, scale, size, box_length=0, charge_range=None, show=True, save=
     if box_length != 0:
         size /= box_length
 
-    scatter = ax.scatter(data[:,0]/1000, data[:,1]/1000, data[:,2]/1000, s=size, c=scale, cmap='Spectral', alpha=0.6)
+    scatter = ax.scatter(data[:,0]/1000, data[:,1]/1000, data[:,2]/1000, s=size, c=scale, cmap='Spectral', alpha=1.0)
 
     ax.set_xlabel('X / mm')
     ax.set_ylabel('Y / mm')
